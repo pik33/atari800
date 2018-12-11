@@ -309,6 +309,7 @@ static void gles2_DrawQuad(const ShaderInfo *sh, GLuint textures[2])
 }
 
 inline unsigned short BGR565(unsigned char r, unsigned char g, unsigned char b) { return ((r&~7) << 8)|((g&~3) << 3)|(b >> 3); }
+inline unsigned long BGR888(unsigned char r, unsigned char g, unsigned char b) { return ((r))|((g) << 8)|(b<<16); }
 
 void gles2_draw(int _w, int _h)
 {
@@ -340,14 +341,17 @@ void gles2_draw(int _w, int _h)
 	{
 		int i;
 		palette_changed = 0;
-		unsigned short palette[256];
+		unsigned long palette[256];
 		for(i = 0; i < 256; ++i)
 		{
-			palette[i] = BGR565(Colours_GetR(i), Colours_GetG(i), Colours_GetB(i));
+//			palette[i] = BGR565(Colours_GetR(i), Colours_GetG(i), Colours_GetB(i));
+			palette[i] = BGR888(Colours_GetR(i), Colours_GetG(i), Colours_GetB(i));
+//			palette[i] = i;
 		}
 		glActiveTexture(GL_TEXTURE1); SHOW_ERROR
 	    glBindTexture(GL_TEXTURE_2D, textures[1]); SHOW_ERROR
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, palette); SHOW_ERROR
+//		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, palette); SHOW_ERROR
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGBA, GL_UNSIGNED_BYTE, palette); SHOW_ERROR
 	}
 
 	glActiveTexture(GL_TEXTURE0); SHOW_ERROR
